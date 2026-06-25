@@ -1,0 +1,31 @@
+# Runtime-genererte filer (inneholder maskinspesifikke data, f.eks. IP-adresser)
+logs/
+settings.json
+
+# Build-artefakter
+build/
+dist/
+dist_*/
+*.spec
+
+# Virtuelt miljø
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Midlertidige test-/loggfiler
+err.txt
+out.txt
+
+# OS / editor
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Lokale Claude Code-innstillinger
+.claude/
