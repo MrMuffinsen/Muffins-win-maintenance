@@ -64,6 +64,32 @@ dependencies. Zip that folder to distribute it.
 > by Windows Defender or SmartScreen. This is expected for unsigned binaries —
 > building from source yourself avoids it entirely.
 
+## The "Unknown publisher" warning
+
+When you run the downloaded `.exe`, Windows may show **"Windows protected your
+PC"** (SmartScreen) or a **"Unknown publisher"** prompt. This is **expected and
+not a sign that anything is wrong** — it appears for every program that isn't
+signed with a paid code-signing certificate, which this free tool is not.
+
+To run it: click **More info → Run anyway**.
+
+If you'd rather not trust the prebuilt binary at all, you can
+[run it from source](#running-from-source) or
+[build it yourself](#building-an-executable) — the result is identical and shows
+no warning when you build it on your own machine.
+
+### Verifying the download
+
+Each release ships with a `.sha256` checksum file. To confirm your download
+wasn't tampered with, compare the hash in PowerShell:
+
+```powershell
+Get-FileHash .\VedlikeholdWInf-v0.9.11-win64.zip -Algorithm SHA256
+```
+
+The output should match the value in `VedlikeholdWInf-v0.9.11-win64.zip.sha256`
+(and the checksum listed on the release page).
+
 ## Notes & limitations
 
 - **Restore points** require System Protection to be enabled on the system
