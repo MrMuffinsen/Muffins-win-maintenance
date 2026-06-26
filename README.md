@@ -39,7 +39,7 @@ Plus:
 Requires Python 3.8+ on Windows.
 
 ```sh
-pip install customtkinter
+pip install -r requirements.txt
 python vedlikehold.py
 ```
 

@@ -1,0 +1,5 @@
+# Runtime dependency (everything else is from the Python standard library)
+customtkinter>=5.2.2
+
+# For building a standalone executable (not needed just to run the app):
+#   pip install pyinstaller
