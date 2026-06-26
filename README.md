@@ -8,6 +8,18 @@ in one go, or fire any single task on its own. Built with Python and
 > ⚠️ **This tool deletes files and changes system state.** Read what each task
 > does before running it. Some tasks require administrator privileges.
 
+## Screenshots
+
+<p align="center">
+  <img src="screenshots/main-window.png" alt="Main window" width="420">
+</p>
+
+<p align="center">
+  <img src="screenshots/run-summary.png" alt="Run summary" width="320">
+  &nbsp;
+  <img src="screenshots/startup-manager.png" alt="Startup manager" width="320">
+</p>
+
 ## Features
 
 | Task | What it does | Admin |
