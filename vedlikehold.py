@@ -13,7 +13,7 @@ import re
 import threading
 import winreg
 
-VERSJON = "0.9.11"
+VERSJON = "0.9.12"
 
 if getattr(sys, 'frozen', False):
     BASE_DIR = os.path.dirname(sys.executable)
@@ -785,7 +785,7 @@ def startup_manager_dialog():
         ctk.CTkLabel(dlg, text="Run as administrator to manage all-users entries.",
                      font=ctk.CTkFont("Segoe UI", 9), text_color="gray60").pack(pady=(0, 4))
 
-    liste = ctk.CTkScrollableFrame(dlg, fg_color="transparent")
+    liste = ctk.CTkScrollableFrame(dlg, fg_color="transparent", label_fg_color="transparent")
     liste.pack(fill=tk.BOTH, expand=True, padx=16, pady=(6, 8))
 
     def refresh():

@@ -96,10 +96,10 @@ Each release ships with a `.sha256` checksum file. To confirm your download
 wasn't tampered with, compare the hash in PowerShell:
 
 ```powershell
-Get-FileHash .\VedlikeholdWInf-v0.9.11-win64.zip -Algorithm SHA256
+Get-FileHash .\VedlikeholdWInf-v0.9.12-win64.zip -Algorithm SHA256
 ```
 
-The output should match the value in `VedlikeholdWInf-v0.9.11-win64.zip.sha256`
+The output should match the value in `VedlikeholdWInf-v0.9.12-win64.zip.sha256`
 (and the checksum listed on the release page).
 
 ## Notes & limitations
