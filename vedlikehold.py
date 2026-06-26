@@ -319,6 +319,27 @@ def safe_after(delay, func, *args):
     except (RuntimeError, tk.TclError):
         pass
 
+def _setup_dialog(dlg):
+    """Felles oppsett for CTkToplevel-dialoger: modal, fremst, og mørk tittellinje.
+
+    CTkToplevel setter tittellinjefargen for tidlig (før vinduet er mappet), så
+    den fester seg ikke. Vi setter den på nytt etter en kort forsinkelse når
+    vinduet faktisk er tegnet."""
+    dlg.transient(root)
+    dlg.lift()
+    dlg.attributes("-topmost", True)
+    if sys.platform.startswith("win"):
+        def fiks_tittellinje():
+            try:
+                dlg._windows_set_titlebar_color(dlg._get_appearance_mode())
+            except Exception:
+                pass
+        dlg.after(200, fiks_tittellinje)
+    # grab settes etter at tittellinje-fiksens skjul/vis er ferdig, så den ikke mistes
+    dlg.after(320, dlg.grab_set)
+    dlg.after(350, lambda: dlg.attributes("-topmost", False))
+    dlg.focus_force()
+
 def update_progress(value):
     progress.set(value / 100)
 
@@ -772,12 +793,7 @@ def startup_manager_dialog():
     dlg = ctk.CTkToplevel(root)
     dlg.title(t['startup_title'])
     dlg.geometry("580x540")
-    dlg.transient(root)
-    dlg.lift()
-    dlg.attributes("-topmost", True)
-    dlg.after(100, dlg.grab_set)
-    dlg.after(300, lambda: dlg.attributes("-topmost", False))
-    dlg.focus_force()
+    _setup_dialog(dlg)
 
     ctk.CTkLabel(dlg, text="Programs that run at startup",
                  font=ctk.CTkFont("Segoe UI", 13, weight="bold")).pack(pady=(16, 2))
@@ -856,12 +872,7 @@ def velg_disker_dialog():
     dlg = ctk.CTkToplevel(root)
     dlg.title(t['velg_disker'])
     dlg.resizable(False, False)
-    dlg.transient(root)
-    dlg.lift()
-    dlg.attributes("-topmost", True)
-    dlg.after(100, dlg.grab_set)
-    dlg.after(300, lambda: dlg.attributes("-topmost", False))
-    dlg.focus_force()
+    _setup_dialog(dlg)
 
     pad = dict(padx=20)
     ctk.CTkLabel(
@@ -945,12 +956,7 @@ def vis_sammendrag(completed, disk_before, disk_after):
     dlg = ctk.CTkToplevel(root)
     dlg.title("Run Summary")
     dlg.resizable(False, False)
-    dlg.transient(root)
-    dlg.lift()
-    dlg.attributes("-topmost", True)
-    dlg.after(100, dlg.grab_set)
-    dlg.after(300, lambda: dlg.attributes("-topmost", False))
-    dlg.focus_force()
+    _setup_dialog(dlg)
 
     pad = dict(padx=20)
 
