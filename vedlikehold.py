@@ -583,8 +583,18 @@ def _mappe_størrelse(sti):
                 pass
     return total
 
+def _er_under(sti, forelder):
+    """True hvis sti ligger under forelder (case-ufølsomt, uten prefix-feller
+    som C:\\Users\\roar2 vs C:\\Users\\roar)."""
+    if not forelder:
+        return False
+    sti      = os.path.normcase(os.path.abspath(sti))
+    forelder = os.path.normcase(os.path.abspath(forelder)).rstrip("\\/")
+    return sti == forelder or sti.startswith(forelder + os.sep)
+
 def _trygg_temp_mappe(sti):
-    """Avviser diskrøtter og stier som ikke ser ut som temp-mapper —
+    """Avviser diskrøtter, stier som ikke ser ut som temp-mapper, og stier
+    utenfor systemdisken/brukerprofilen (f.eks. nettverksstier) —
     beskytter mot manipulert/feilkonfigurert %TEMP%."""
     if not sti:
         return False
@@ -592,7 +602,11 @@ def _trygg_temp_mappe(sti):
     _, rest = os.path.splitdrive(sti)
     if rest.strip("\\/") == "":   # diskrot, f.eks. C:\
         return False
-    return "temp" in os.path.basename(sti).lower()
+    if "temp" not in os.path.basename(sti).lower():
+        return False
+    systemdrive = os.environ.get("SystemDrive", "C:") + "\\"
+    profil      = os.environ.get("USERPROFILE", "")
+    return _er_under(sti, systemdrive) or _er_under(sti, profil)
 
 def tøm_temp():
     logg(f"--- {t['tøm_temp']} ---")
