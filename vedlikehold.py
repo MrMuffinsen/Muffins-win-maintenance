@@ -13,7 +13,7 @@ import re
 import threading
 import winreg
 
-VERSJON = "0.9.12"
+VERSJON = "0.9.13"
 
 if getattr(sys, 'frozen', False):
     BASE_DIR = os.path.dirname(sys.executable)
@@ -103,7 +103,7 @@ t = {
     "tt_logg":          "View a log of all actions",
     "tt_export":        "Save the log file to a chosen location",
     "optimize_drive":   "Optimize All Drives  (Admin)",
-    "tt_optimize":      "Defragment/trim all local fixed drives",
+    "tt_optimize":      "Defragment HDDs / TRIM SSDs on your local drives",
     "optimize_done":    "All drives optimized.",
     "tøm_temp":         "Clean Temp Folders",
     "tt_temp":          "Delete temporary files from %TEMP% (and C:\\Windows\\Temp when admin)",
@@ -301,6 +301,8 @@ alle_knapper = [
     knapp_kjør_valgte, knapp_logg, knapp_export, knapp_startup, clear_log_btn,
     cb_flush, cb_renew, cb_dism, cb_optimize, cb_restore, cb_wu, cb_temp, cb_bin,
 ]
+if knapp_velg_disker is not None:
+    alle_knapper.append(knapp_velg_disker)
 
 # ----------------------------
 # Tooltips (resterende knapper)
@@ -325,6 +327,13 @@ def _setup_dialog(dlg):
     CTkToplevel setter tittellinjefargen for tidlig (før vinduet er mappet), så
     den fester seg ikke. Vi setter den på nytt etter en kort forsinkelse når
     vinduet faktisk er tegnet."""
+    def _try(func, *args):
+        """Ignorer TclError hvis dialogen lukkes før en forsinket callback fyrer."""
+        try:
+            func(*args)
+        except tk.TclError:
+            pass
+
     dlg.transient(root)
     dlg.lift()
     dlg.attributes("-topmost", True)
@@ -336,8 +345,8 @@ def _setup_dialog(dlg):
                 pass
         dlg.after(200, fiks_tittellinje)
     # grab settes etter at tittellinje-fiksens skjul/vis er ferdig, så den ikke mistes
-    dlg.after(320, dlg.grab_set)
-    dlg.after(350, lambda: dlg.attributes("-topmost", False))
+    dlg.after(320, lambda: _try(dlg.grab_set))
+    dlg.after(350, lambda: _try(dlg.attributes, "-topmost", False))
     dlg.focus_force()
 
 def update_progress(value):
@@ -486,6 +495,7 @@ def kjør_kommando(cmd, base_progress, step_size):
     """cmd er en liste (program + argumenter) — kjøres uten shell."""
     process = subprocess.Popen(
         cmd,
+        stdin=subprocess.DEVNULL,   # ingen kommando skal kunne vente på input
         stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
         text=True, errors="replace",
         creationflags=subprocess.CREATE_NO_WINDOW
@@ -540,7 +550,8 @@ def release_renew(silent=False):
         kjør_kommando(sys_cmd("ipconfig.exe", "/release"), 0, 0)
         logg(t['renewing_ip'])
         output_renew = subprocess.check_output(
-            sys_cmd("ipconfig.exe", "/renew"), text=True, timeout=60,
+            sys_cmd("ipconfig.exe", "/renew"), text=True, errors="replace",
+            timeout=60, stdin=subprocess.DEVNULL,
             creationflags=subprocess.CREATE_NO_WINDOW
         )
         ip = hent_ip(output_renew)
@@ -630,7 +641,8 @@ def tøm_wu_cache():
                             "SoftwareDistribution", "Download")
     for svc in ("wuauserv", "bits"):
         logg(f"Stopping {svc} ...")
-        kjør_kommando(sys_cmd("net.exe", "stop", svc), 0, 0)
+        # /y svarer automatisk ja hvis avhengige tjenester også må stoppes
+        kjør_kommando(sys_cmd("net.exe", "stop", svc, "/y"), 0, 0)
 
     frigjort = 0
     hoppet_over = 0
@@ -792,7 +804,10 @@ def toggle_startup(entry):
 def startup_manager_dialog():
     dlg = ctk.CTkToplevel(root)
     dlg.title(t['startup_title'])
-    dlg.geometry("580x540")
+    # Sentrer over hovedvinduet, som de andre dialogene
+    x = root.winfo_x() + (root.winfo_width()  - 580) // 2
+    y = root.winfo_y() + (root.winfo_height() - 540) // 2
+    dlg.geometry(f"580x540+{x}+{y}")
     _setup_dialog(dlg)
 
     ctk.CTkLabel(dlg, text="Programs that run at startup",

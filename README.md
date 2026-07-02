@@ -96,10 +96,10 @@ Each release ships with a `.sha256` checksum file. To confirm your download
 wasn't tampered with, compare the hash in PowerShell:
 
 ```powershell
-Get-FileHash .\VedlikeholdWInf-v0.9.12-win64.zip -Algorithm SHA256
+Get-FileHash .\VedlikeholdWInf-v0.9.13-win64.zip -Algorithm SHA256
 ```
 
-The output should match the value in `VedlikeholdWInf-v0.9.12-win64.zip.sha256`
+The output should match the value in `VedlikeholdWInf-v0.9.13-win64.zip.sha256`
 (and the checksum listed on the release page).
 
 ## Notes & limitations
@@ -110,6 +110,9 @@ The output should match the value in `VedlikeholdWInf-v0.9.12-win64.zip.sha256`
   thing per drive type (TRIM for SSDs, defrag for HDDs).
 - Logs contain machine-specific details (timestamps, IP addresses) and are
   git-ignored by default.
+- The app writes `logs/` and `settings.json` **next to the executable**, so
+  extract it to a user-writable location (Desktop, Documents, etc.) — not
+  `C:\Program Files`.
 
 ## License
 
