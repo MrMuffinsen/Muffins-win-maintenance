@@ -13,7 +13,7 @@ import re
 import threading
 import winreg
 
-VERSJON = "0.9.13"
+VERSJON = "0.9.14"
 
 if getattr(sys, 'frozen', False):
     BASE_DIR = os.path.dirname(sys.executable)
@@ -97,7 +97,7 @@ t = {
     "log_missing":      "No log file found.",
     "tt_flush":         "Flush DNS cache",
     "tt_release_renew": "Release current IP and request new from DHCP",
-    "tt_dism_sfc":      "Clean components, restore system health, and verify files",
+    "tt_dism_sfc":      "Creates a restore point, then cleans components, restores system health, and verifies files",
     "tt_bin":           "Empty recycle bin",
     "tt_all":           "Run only the checked tasks",
     "tt_logg":          "View a log of all actions",
@@ -1136,9 +1136,14 @@ def kjør_dism_sfc():
     update_progress(0)
     def job():
         try:
-            dism_startcomponentcleanup(0, 33.3)
-            dism_restorehealth(33.3, 33.3)
-            sfc_kjør(66.6, 33.3)
+            # Sikkerhetsnett før systemfiler røres. Windows begrenser uansett
+            # til ett punkt per 24t, så et ferskt punkt gir bare en logglinje.
+            lag_gjenopprettingspunkt()
+            safe_after(0, update_progress, 10)
+            safe_after(0, status_var.set, "Running DISM + SFC...")
+            dism_startcomponentcleanup(10, 30)
+            dism_restorehealth(40, 30)
+            sfc_kjør(70, 30)
         finally:
             safe_after(0, update_progress, 100)
             safe_after(0, status_var.set, t['klar'])

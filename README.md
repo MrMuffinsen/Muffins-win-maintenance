@@ -28,7 +28,7 @@ in one go, or fire any single task on its own. Built with Python and
 | **Release and Renew IP** | Releases and renews the DHCP lease, shows the new IP | |
 | **Clean Temp Folders** | Clears `%TEMP%` (and `C:\Windows\Temp` when admin) | partial |
 | **Empty Recycle Bin** | Empties the Recycle Bin for all drives | |
-| **DISM + SFC** | Component cleanup, restore health, and system file check | ✓ |
+| **DISM + SFC** | Creates a restore point, then component cleanup, restore health, and system file check | ✓ |
 | **Optimize All Drives** | Defrags HDDs / TRIMs SSDs; pick which drives when you have several | ✓ |
 | **Create Restore Point** | Creates a system restore point as a safety net | ✓ |
 | **Clean Windows Update Cache** | Stops update services, clears the download cache, restarts them | ✓ |
@@ -96,10 +96,10 @@ Each release ships with a `.sha256` checksum file. To confirm your download
 wasn't tampered with, compare the hash in PowerShell:
 
 ```powershell
-Get-FileHash .\VedlikeholdWInf-v0.9.13-win64.zip -Algorithm SHA256
+Get-FileHash .\VedlikeholdWInf-v0.9.14-win64.zip -Algorithm SHA256
 ```
 
-The output should match the value in `VedlikeholdWInf-v0.9.13-win64.zip.sha256`
+The output should match the value in `VedlikeholdWInf-v0.9.14-win64.zip.sha256`
 (and the checksum listed on the release page).
 
 ## Notes & limitations
